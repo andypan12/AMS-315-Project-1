@@ -8,9 +8,13 @@ setwd(wdir)
 # wdir <- "C:\\Your Working Directory\\AMS 315" (for Windows users)
 
 
-# Load and read the files
+# Install package dplyr
+install.packages("dplyr")
+
 library(dplyr)
 
+
+# Load and read the files
 iv <- read.csv("108415_IV.csv")
 dv <- read.csv("108415_DV.csv")
 
