@@ -1,0 +1,91 @@
+# To get the current working directory
+getwd()
+
+
+# set the working directory
+wdir <- "/Your Working Directory/AMS 315"
+setwd(wdir)
+# wdir <- "C:\\Your Working Directory\\AMS 315" (for Windows users)
+
+
+# Load and read the files
+library(dplyr)
+
+data <- read.csv("108415_partB.csv")
+
+
+# Find transformation
+model <- lm(y ~ x, data = data)
+
+# For scatterplot
+plot(data$x, data$y)          
+
+#For residual plot
+plot(fitted(model), resid(model))   
+abline(h = 0)
+
+
+# From data, pattern in residuals show a nonlinear relationship
+# Try log(y) ~ log(x)
+# Create transformed data
+data_trans <- data.frame(
+  xtrans = log(data$x),
+  ytrans = log(data$y)
+)
+
+
+# Fit transformed model
+model_trans <- lm(ytrans ~ xtrans, data = data_trans)
+summary(model_trans)
+
+
+# Bin the data using cut()
+groups <- cut(
+  data_trans$xtrans,
+  breaks = c(
+    -Inf,
+    seq(min(data_trans$xtrans)+0.3,
+        max(data_trans$xtrans)-0.3,
+        by = 0.3),
+    Inf
+  )
+)
+
+
+# Check bins
+table(groups)
+
+
+# Compute averaged x values using ave()
+x_binned <- ave(data_trans$xtrans, groups, FUN = mean)
+
+
+# Create binned dataset
+data_bin <- data.frame(
+  x = x_binned,
+  y = data_trans$ytrans
+)
+
+
+# Fit model on binned data
+fit_b <- lm(y ~ x, data = data_bin)
+
+
+# Install once if needed
+install.packages("remotes")
+library(remotes)
+
+install_github("cran/alr3")
+library(alr3)
+
+# When running the above block of code, you may be prompted to update other existing packages in R during this step. 
+# By typing the number ‘3’ into the console when you receive this prompt, only the alr3 library should be installed. 
+# After doing this, you should be able to perform the Lack of Fit test successfully.
+
+
+# Run LOF test
+pureErrorAnova(fit_b)
+
+# Look at LOF p-value
+# High p-value (≥ 0.05) → no lack of fit → model is good
+# Low p-value (< 0.05) → model is not adequate
