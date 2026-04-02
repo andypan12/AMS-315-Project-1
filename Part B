@@ -89,3 +89,8 @@ pureErrorAnova(fit_b)
 # Look at LOF p-value
 # High p-value (≥ 0.05) → no lack of fit → model is good
 # Low p-value (< 0.05) → model is not adequate
+
+
+# Check residual plot of binned data
+plot(fitted(fit_b), resid(fit_b))   
+abline(h = 0)
