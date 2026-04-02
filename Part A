@@ -1,0 +1,63 @@
+# To get the current working directory
+getwd()
+
+
+# set the working directory
+wdir <- "/Your Working Directory/AMS 315"
+setwd(wdir)
+# wdir <- "C:\\Your Working Directory\\AMS 315" (for Windows users)
+
+
+# Load and read the files
+library(dplyr)
+
+iv <- read.csv("108415_IV.csv")
+dv <- read.csv("108415_DV.csv")
+
+
+# Sort both datasets by Subject ID
+iv <- iv %>% arrange(ID)
+dv <- dv %>% arrange(ID)
+
+
+# Merge the datasets
+PartA <- full_join(iv, dv, by = "ID")
+
+
+# Examine merged dataset
+str(PartA)
+View(PartA)
+
+
+# Assess how many missing values are in the data set
+any(is.na(PartA[,2]) == TRUE)
+any(is.nan(PartA[,2]) == TRUE)
+
+
+# Imputation of the missing values with package mice
+PartA_incomplete <- PartA
+
+
+# Install MICE if you don't have it by using the below line of code:
+install.packages('mice')
+
+library(mice)
+
+
+# Inspect the pattern of missing data by entering the below code
+md.pattern(PartA_incomplete)
+
+
+# Drop the observations that are missing both IV and DV
+PartA_imp <- PartA[!is.na(PartA$IV)==TRUE|!is.na(PartA$DV)==TRUE,]
+
+
+# Linear regression using bootstrap
+imp <- mice(PartA_imp, method = "norm.boot", printFlag = FALSE)
+
+PartA_complete <- complete(imp)
+
+
+# If dataset is complete
+md.pattern(PartA_complete)
+
