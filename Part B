@@ -44,9 +44,9 @@ groups <- cut(
   data_trans$xtrans,
   breaks = c(
     -Inf,
-    seq(min(data_trans$xtrans)+0.3,
-        max(data_trans$xtrans)-0.3,
-        by = 0.3),
+    seq(min(data_trans$xtrans)+0.1,
+        max(data_trans$xtrans)-0.1,
+        by = 0.1),
     Inf
   )
 )
